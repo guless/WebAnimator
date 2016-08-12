@@ -1,0 +1,35 @@
+{
+  "name": "webanimator",
+  "version": "1.0.0",
+  "description": "Bring adobe flash(animate cc) and after effects animations to web platform.",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack",
+    "start": "npm run open && webpack-dev-server --port 10086",
+    "open" : "open http://127.0.0.1:10086/html/main.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/guless/WebAnimator.git"
+  },
+  "keywords": [
+    "design",
+    "animate",
+    "flash",
+    "after effects",
+    "canvas"
+  ],
+  "author": "Samlv9 <Samlv9@live.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/guless/WebAnimator/issues"
+  },
+  "homepage": "https://github.com/guless/WebAnimator#readme",
+  "devDependencies": {
+    "babel-core": "^6.13.2",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2015": "^6.13.2",
+    "webpack": "^1.13.1",
+    "webpack-dev-server": "^1.14.1"
+  }
+}

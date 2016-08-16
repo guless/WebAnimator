@@ -6,7 +6,8 @@
   "scripts": {
     "build": "webpack",
     "start": "npm run open && webpack-dev-server --port 10086",
-    "open" : "open http://127.0.0.1:10086/html/main.html"
+    "open": "open http://127.0.0.1:10086/html/main.html",
+    "test": "babel-node ./src/main.js"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
   },
   "homepage": "https://github.com/guless/WebAnimator#readme",
   "devDependencies": {
+    "babel-cli": "^6.11.4",
     "babel-core": "^6.13.2",
     "babel-loader": "^6.2.4",
     "babel-preset-es2015": "^6.13.2",

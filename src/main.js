@@ -35,3 +35,42 @@
 /// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
+import WARCreator from "./animator/WARCreator";
+import WARParser from "./animator/WARParser";
+import * as CompressionFlags from "./animator/defs/CompressionFlags";
+import * as BlockTypeCode  from "./animator/defs/BlockTypeCode";
+
+var creator = new WARCreator();
+
+creator.setCompression(CompressionFlags.DEFLATE);
+creator.setMetadata(550, 400, 120, 60, 0xCCCCCC);
+creator.writeHeader();
+
+var blocks = [
+    new Uint8Array([1, 2, 3, 4, 5]),
+    new Uint8Array([6, 7, 8, 9, 10])
+];
+
+for ( var i = 0; i < blocks.length; ++i ) {
+    creator.writeAnimation(blocks[i]);
+}
+
+var bytes = creator.flush();
+console.log("bytes:", bytes);
+
+/// 测试解码部分：
+var parser = new WARParser();
+
+parser.addEventListener("metadata", function( evt ) {
+    var metadata = evt.metadata;
+    console.log("metadata:", metadata);
+});
+
+parser.addEventListener("block", function( evt ) {
+    var type = evt.blockTypeCode == BlockTypeCode.ANIMATION ? "Animation" : "Library";
+    var data = evt.blockContent;
+    
+    console.log(type + ":", data);
+});
+
+parser.write(bytes);

@@ -34,49 +34,50 @@
                | Library Item |>= = = = = = = = = = = = = = = = = ==.                               /
                '--------------'                                     |                              /
                      /                                              |                             /
-    .----------------------------.                              (Inherit)                        /
-    | Item Size | Item Name | \0 | (EOF)                            |                  . - - - -'
-    '----------------------------'                                  v                 /
-          |           |                                  - - - - - - - - - - - -     /   
-        52KB        "ABC"                               /           |           \   /              
-        (4bytes)    (*bytes)                           /            |            \ /  
-                                     .--------------------------------------------.
-                                     | Item Type Code | Images / Fonts / Graphics |
-                                     '--------------------------------------------'
-                                           |            /          |         \ _ _ _ _ _ _ _ _ _
-                                          0x90         /   .--------------------------------.   \
-                                         (1bytes)     /    | + | Font Type Code | {RawData} |    \
+             .----------------.                                 (Inherit)                        /
+             | Item Name | \0 | (EOF)                               |                   .- - - -'
+             '----------------'                                     |                  /
+                   |                                                v                 /  
+                 "ABC"                                  - - - - - - - - - - - --     /             
+                 (*bytes)                              /            |           \   /  
+                                                      /             |            \ /  
+                      .-----------------------------------------------------------.
+                      | Item Length | Item Type Code | Bitmaps / Fonts / Graphics |
+                      '-----------------------------------------------------------'
+                                            |           /          |         \ _ _ _ _ _ _ _ _ _
+                                           0x90        /   .--------------------------------.   \
+                                          (1bytes)    /    | + | Font Type Code | {RawData} |    \
                                                      /     '--------------------------------'     \
-                                .------------------------.             |              |            \
-                                | + | Layout | {RawData} |           0xa0         [\x00 ... \x0n]   \
-                                '------------------------'           (1bytes)     (*bytes)           \
+                                   .----------------------.            |              |            \
+                                   | + | Size | {RawData} |          0xa0         [\x00 ... \x0n]   \
+                                   '----------------------'          (1bytes)     (*bytes)           \
                                         /           |                                                 \
-                      .----------------.        [\x00 ... \x0n]                     .------------------------------------.
-                      | width | height |        (*bytes)                            | + | Fill? / Stroke? | Drawing Path |
-                      '----------------'                                            '------------------------------------'
-                          |        |
-                        100px    100px
-                        (2bytes) (2bytes)
+                      .----------------.        [\x00 ... \x0n]                     .---------------------------------------------------.
+                      | width | height |        (*bytes)                            | + | Fill? / Stroke? | Scalable Graphics Path | \0 | (EOF)
+                      '----------------'                                            '---------------------------------------------------'
+                          |        |                                                                                    |
+                        100px    100px                                                                                "M0 0L100 100Z"
+                        (2bytes) (2bytes)                                                                             (*bytes)
                                   
                                
-.--------------------------------------------------------------------------------------------------------------.
-| Name            | Type       | Value               | Size(bytes) | Description                               |
-|--------------------------------------------------------------------------------------------------------------'
-| Leader          | {String}   | "WAR"               | 3           | The `war` file leader characters, always equals to 'war'.
-| C-Flags         | {Enum}     | NONE/DEFLATE/GZIP   | 1           | The `Block Content` compression algorithms. defaults to `CompressionFlags.NONE`. 
-| Version         | {Semver}   | "1.0.0"             | 6           | Semantic Versioning of current specifications. See: http://semver.org/
-| width           | {UInt16}   | 550px               | 2           | Stage `width`.
-| height          | {UInt16}   | 400px               | 2           | Stage `height`.
-| totalFrames     | {UInt16}   | 120frames           | 2           | Stage `totalFrames`.
-| frameRate       | {UInt16}   | 60fps               | 2           | Stage `frameRate`.
-| bgColor         | {RGB}      | 0xABCDEF            | 3           | Stage `backgroundColor`.
-| Block Length    | {UInt32}   | 12047bytes          | 4           | Defines the follow block size.
-| Block Type Code | {Enum}     | LIBRARY/ANIMATION   | 1           | Defines the type code of block.
-| Block Content   | {RawData}  | [\x00...\xff]       | *           | Contains the animation raw data. Maybe compressed if `C-Flags` not `CompressionFlags.NONE`.
-| Item Type Code  | {Enum}     | IMAGE/FONT/GRAPHICS | 1           | Defines the type code of libary item.
-| Item Name       | {String}   | "Symbol_001"        | *           | UTF-8 String with `EOF`.
-| Font Type Code  | {Enum}     | TTF/SVG/WOFF        | 1           | Defines the file format type code of font.
-'-------------------------------------------------------------------------------------------------------------
+.----------------------------------------------------------------------------------------------------------------.
+| Name            | Type       | Value                 | Size(bytes) | Description                               |
+|----------------------------------------------------------------------------------------------------------------'
+| Leader          | {String}   | "WAR"                 | 3           | The `war` file leader characters, always equals to 'war'.
+| C-Flags         | {Enum}     | NONE/DEFLATE/GZIP     | 1           | The `Block Content` compression algorithms. defaults to `CompressionFlags.NONE`. 
+| Version         | {Semver}   | "1.0.0"               | 6           | Semantic Versioning of current specifications. See: http://semver.org/
+| width           | {UInt16}   | 550px                 | 2           | Stage `width`.
+| height          | {UInt16}   | 400px                 | 2           | Stage `height`.
+| totalFrames     | {UInt16}   | 120frames             | 2           | Stage `totalFrames`.
+| frameRate       | {UInt16}   | 60fps                 | 2           | Stage `frameRate`.
+| bgColor         | {RGB}      | 0xABCDEF              | 3           | Stage `backgroundColor`.
+| Block Length    | {UInt32}   | 12047bytes            | 4           | Defines the follow block size.
+| Block Type Code | {Enum}     | LIBRARY/ANIMATION     | 1           | Defines the type code of block.
+| Block Content   | {RawData}  | [\x00...\xff]         | *           | Contains the animation raw data. Maybe compressed if `C-Flags` not `CompressionFlags.NONE`.
+| Item Type Code  | {Enum}     | BITMAP/FONT/GRAPHICS  | 1           | Defines the type code of libary item.
+| Item Name       | {String}   | "Symbol_001"          | *           | UTF-8 String with `EOF`.
+| Font Type Code  | {Enum}     | TTF/SVG/WOFF          | 1           | Defines the file format type code of font.
+'---------------------------------------------------------------------------------------------------------------
 
 **CompressionFlags:**
 .-----------------------------------------------.
@@ -99,7 +100,7 @@
 .-----------------------------------------------.
 | Code | Constants                              |
 |-----------------------------------------------'
-| 0x90 | ItemTypeCode.IMAGE
+| 0x90 | ItemTypeCode.BITMAP
 | 0x91 | ItemTypeCode.FONT
 | 0x92 | ItemTypeCode.GRAPHICS
 '------------------------------------------------

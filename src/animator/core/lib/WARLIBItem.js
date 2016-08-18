@@ -36,40 +36,28 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 import WARSerializable from "../WARSerializable";
-import { EOF } from "../../defs/EOF";
-
-import atob   from "../../utils/atob";
-import utf8   from "../../utils/utf8";
-import concat from "../../utils/concat";
+import * as ItemTypeCode from "../../defs/ItemTypeCode";
 
 
-export default class WARLIBItem extends WARSerializable {
-    constructor( name = "" ) {
+export default /*< abstruct >*/ class WARLIBItem extends WARSerializable {
+    
+    constructor( name = "", type = ItemTypeCode.NONE ) {
+        /*< throw new SyntaxError("abstruct class can not create instances."); >*/
         super();
         
-        this.dataList = [];
         this.name = name;
+        this.type = type;
     }
     
     setName( name ) {
         this.name = name;
     }
     
-    writeName() {
-        this.dataList.push(utf8(this.name));
-        this.dataList.push(EOF);
-    }
-    
-    readName() {
-        
-        
-    }
-    
     serialize() {
-        return concat(this.dataList);
+        throw new SyntaxError("this method must be implements by derived class.");
     }
     
     deSerialize( bytes ) {
-        
+        throw new SyntaxError("this method must be implements by derived class.");
     }
 }

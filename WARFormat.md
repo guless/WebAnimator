@@ -44,9 +44,9 @@
                       .-----------------------------------------------------------.
                       | Item Length | Item Type Code | Bitmaps / Fonts / Graphics |
                       '-----------------------------------------------------------'
-                                            |           /          |         \ _ _ _ _ _ _ _ _ _
-                                           0x90        /   .--------------------------------.   \
-                                          (1bytes)    /    | + | Font Type Code | {RawData} |    \
+                             |              |           /          |         \ _ _ _ _ _ _ _ _ _
+                           132KB           0x90        /   .--------------------------------.   \
+                           (4bytes)       (1bytes)    /    | + | Font Type Code | {RawData} |    \
                                                      /     '--------------------------------'     \
                                    .----------------------.            |              |            \
                                    | + | Size | {RawData} |          0xa0         [\x00 ... \x0n]   \
@@ -103,6 +103,7 @@
 | 0x90 | ItemTypeCode.BITMAP
 | 0x91 | ItemTypeCode.FONT
 | 0x92 | ItemTypeCode.GRAPHICS
+| 0x93 | ItemTypeCode.SOUND
 '------------------------------------------------
 
 **Font Type Code:**

@@ -36,23 +36,36 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 import WARLIBItem from "./WARLIBItem";
-
+import * as ItemTypeCode from "../../defs/ItemTypeCode";
 
 export default class WARBitmapItem extends WARLIBItem {
-    constructor( name = "", width = 0, height = 0, bitmapData = null ) {
-        super(name);
+    constructor( name = "", width = 0, height = 0, rawData = null ) {
+        super(name, ItemTypeCode.BITMAP);
         
         this.width = width;
         this.height = height;
-        this.bitmapData = bitmapData;
+        this.rawData = rawData;
     }
     
     serialize() {
+        var buffer = new ArrayBuffer(4 + this.rawData.length);
+        var viewer = new DataView(buffer);
+        var writer = new Uint8Array(buffer);
         
+        viewer.setUint16(0, this.width);
+        viewer.setUint16(2, this.height);
+        
+        writer.set(this.rawData, 4);
+        return writer;
     }
     
     deSerialize( bytes ) {
+        var viewer = new DataView(bytes.buffer, bytes.byteOffset);
         
+        this.width = viewer.getUint16(0);
+        this.height = viewer.getUint16(2);
+        this.rawData = bytes.subarray(4);
         
+        return bytes.length;
     }
 }

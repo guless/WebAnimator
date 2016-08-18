@@ -39,6 +39,10 @@ import WARCreator from "./animator/WARCreator";
 import WARParser from "./animator/WARParser";
 import * as CompressionFlags from "./animator/defs/CompressionFlags";
 import * as BlockTypeCode  from "./animator/defs/BlockTypeCode";
+import WARLibrary from "./animator/core/lib/WARLibrary";
+import WARBitmapItem from "./animator/core/lib/WARBitmapItem";
+console.time("WebAnimator Create");
+
 
 var creator = new WARCreator();
 
@@ -46,31 +50,41 @@ creator.setCompression(CompressionFlags.DEFLATE);
 creator.setMetadata(550, 400, 120, 60, 0xCCCCCC);
 creator.writeHeader();
 
-var blocks = [
-    new Uint8Array([1, 2, 3, 4, 5]),
-    new Uint8Array([6, 7, 8, 9, 10])
-];
+var lib = new WARLibrary();
+lib.addItem(new WARBitmapItem("folder/angle.png", 675, 960, new Uint8Array([97, 98, 99, 100])));
+lib.addItem(new WARBitmapItem("folder/bbc.png", 4675, 960, new Uint8Array([3, 4, 99, 7])));
 
-for ( var i = 0; i < blocks.length; ++i ) {
-    creator.writeAnimation(blocks[i]);
-}
+creator.writeLibrary(lib);
 
-var bytes = creator.flush();
-console.log("bytes:", bytes);
+var warfile = creator.flush();
+console.log("file:", warfile);
+console.timeEnd("WebAnimator Create");
 
+/// ===========================================================================
 /// 测试解码部分：
+/// ===========================================================================
+console.time("WebAnimator Parse");
 var parser = new WARParser();
 
-parser.addEventListener("metadata", function( evt ) {
+parser.addEventListener("metadata", ( evt ) => {
     var metadata = evt.metadata;
     console.log("metadata:", metadata);
 });
 
-parser.addEventListener("block", function( evt ) {
-    var type = evt.blockTypeCode == BlockTypeCode.ANIMATION ? "Animation" : "Library";
-    var data = evt.blockContent;
+parser.addEventListener("block", ( evt ) => {
+    var type = evt.blockTypeCode;
+    var content = evt.blockContent;
     
-    console.log(type + ":", data);
+    if ( type == BlockTypeCode.LIBRARY ) {
+        var lib = new WARLibrary();
+        lib.deSerialize(content);
+        console.log("library:", lib);
+        return;
+    }
+    
+    throw new Error("Unknow block type.");
 });
 
-parser.write(bytes);
+parser.write(warfile);
+
+console.timeEnd("WebAnimator Parse");

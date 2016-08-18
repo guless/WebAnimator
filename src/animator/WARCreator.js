@@ -123,12 +123,12 @@ export default class WARCreator {
         this.dataList.push(bytes);
     }
     
-    writeLibrary( bytes ) {
-        this.writeBlock(bytes, BlockTypeCode.LIBRARY);
+    writeLibrary( lib ) {
+        this.writeBlock(lib.serialize(), BlockTypeCode.LIBRARY);
     }
     
-    writeAnimation( bytes ) {
-        this.writeBlock(bytes, BlockTypeCode.ANIMATION);
+    writeAnimation( ani ) {
+        this.writeBlock(ani.serialize(), BlockTypeCode.ANIMATION);
     }
     
     flush() {

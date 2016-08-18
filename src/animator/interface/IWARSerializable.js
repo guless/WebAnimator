@@ -39,7 +39,7 @@
 
 export default interface IWARSerializable {
     serialize(): Array.<Uint8Array>;
-    deSerialize( bytes: Uint8Array ) :Uint8Array;
+    deSerialize( bytes: Uint8Array ) :Number;
 }
 
 **/

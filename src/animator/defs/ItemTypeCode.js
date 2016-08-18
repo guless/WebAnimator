@@ -36,6 +36,7 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
+export const NONE     = 0x00;
 export const BITMAP   = 0x90;
 export const FONT     = 0x91;
 export const GRAPHICS = 0x92;
